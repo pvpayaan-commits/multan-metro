@@ -50,3 +50,51 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         }
     });
 });
+
+// EmailJS Reservation Form
+const reservationForm = document.getElementById('reservationForm');
+const resButton = document.getElementById('resButton');
+
+// EmailJS credentials — replace with your own from emailjs.com
+const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';
+
+if (window.emailjs) {
+    emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
+reservationForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const original = resButton.innerHTML;
+    resButton.disabled = true;
+    resButton.innerHTML = '<span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span> Sending...';
+
+    const templateParams = {
+        from_name: document.getElementById('res-name').value,
+        customer_phone: document.getElementById('res-phone').value,
+        res_date: document.getElementById('res-date').value,
+        guests: document.getElementById('res-guests').value,
+        notes: document.getElementById('res-notes').value
+    };
+
+    if (!window.emailjs || EMAILJS_PUBLIC_KEY.includes('YOUR_')) {
+        resButton.disabled = false;
+        resButton.innerHTML = original;
+        alert('EmailJS is not configured yet. Replace the placeholder credentials in script.js.');
+        return;
+    }
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+        .then(() => {
+            resButton.innerHTML = '<span class="btn-icon"><i class="fas fa-check-circle"></i></span> Request Sent! We\'ll Call to Confirm';
+            reservationForm.reset();
+            setTimeout(() => { resButton.innerHTML = original; resButton.disabled = false; }, 3500);
+        })
+        .catch((error) => {
+            console.error('EmailJS error:', error);
+            resButton.innerHTML = '<span class="btn-icon"><i class="fas fa-exclamation-circle"></i></span> Failed. Please Try Again';
+            setTimeout(() => { resButton.innerHTML = original; resButton.disabled = false; }, 3000);
+        });
+});
