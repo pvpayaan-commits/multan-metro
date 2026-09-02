@@ -72,6 +72,7 @@ reservationForm.addEventListener('submit', (e) => {
     resButton.innerHTML = '<span class="btn-icon"><i class="fas fa-spinner fa-spin"></i></span> Sending...';
 
     const templateParams = {
+        site_name: 'Multan Metro Restaurant',
         from_name: document.getElementById('res-name').value,
         customer_phone: document.getElementById('res-phone').value,
         res_date: document.getElementById('res-date').value,
